@@ -16,9 +16,11 @@ const Hero: React.FC = () => {
             <Shield className="w-4 h-4" />
             <span>Next-Gen Phishing Protection</span>
           </div>
-          <h1 className="text-5xl md:text-7xl font-heading font-bold mb-6 leading-tight">
+          <h1 className="text-5xl md:text-7xl font-heading font-bold mb-6 leading-tight text-white">
             Detect Phishing <br />
-            <span className="gradient-text">Before It Detects You.</span>
+            <span className="bg-gradient-to-r from-[#00E5FF] via-[#7C3AED] to-[#00E5FF] bg-[length:200%_auto] bg-clip-text text-transparent animate-gradient-slow">
+              Before It Detects You.
+            </span>
           </h1>
           <p className="text-text-secondary text-lg md:text-xl mb-10 max-w-xl leading-relaxed">
             AI-powered phishing detection for URLs and emails using explainable AI
@@ -39,29 +41,58 @@ const Hero: React.FC = () => {
           <div className="relative w-full aspect-square max-w-lg mx-auto">
             {/* Cybersecurity Illustration with SVG/CSS */}
             <div className="absolute inset-0 bg-accent-primary/5 rounded-full animate-pulse" />
-            <svg viewBox="0 0 200 200" className="w-full h-full text-accent-primary drop-shadow-2xl">
+            <svg viewBox="0 0 200 200" className="w-full h-full text-accent-primary drop-shadow-[0_0_30px_rgba(0,229,255,0.2)]">
               <defs>
                 <linearGradient id="shieldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
                   <stop offset="0%" stopColor="#00E5FF" stopOpacity="0.8" />
                   <stop offset="100%" stopColor="#7C3AED" stopOpacity="0.8" />
                 </linearGradient>
               </defs>
+
+              {/* Outer rotating rings */}
+              <motion.circle
+                cx="100" cy="100" r="90"
+                fill="none" stroke="currentColor" strokeWidth="0.5" strokeDasharray="20 40"
+                animate={{ rotate: 360 }}
+                transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+              />
+              <motion.circle
+                cx="100" cy="100" r="80"
+                fill="none" stroke="currentColor" strokeWidth="0.5" strokeDasharray="10 30"
+                animate={{ rotate: -360 }}
+                transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
+              />
+
+              {/* Radar sweep */}
+              <motion.path
+                d="M100 100 L100 20"
+                stroke="url(#shieldGrad)"
+                strokeWidth="1"
+                strokeLinecap="round"
+                animate={{ rotate: 360 }}
+                transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
+                style={{ originX: "100px", originY: "100px" }}
+              />
+
               <path
                 d="M100 20 L40 45 L40 100 C40 145 100 180 100 180 C100 180 160 145 160 100 L160 45 L100 20 Z"
                 fill="none"
                 stroke="url(#shieldGrad)"
                 strokeWidth="2"
-                strokeDasharray="10 5"
-              >
-                <animate attributeName="stroke-dashoffset" from="0" to="15" dur="1s" repeatCount="indefinite" />
-              </path>
-              <circle cx="100" cy="100" r="40" fill="none" stroke="currentColor" strokeWidth="0.5" opacity="0.3" />
-              <circle cx="100" cy="100" r="60" fill="none" stroke="currentColor" strokeWidth="0.5" opacity="0.2" />
+              />
 
-              <g className="animate-bounce" style={{ animationDuration: '3s' }}>
-                <rect x="85" y="85" width="30" height="30" rx="4" fill="url(#shieldGrad)" />
+              <circle cx="100" cy="100" r="40" fill="none" stroke="currentColor" strokeWidth="0.5" opacity="0.3" />
+
+              <motion.g
+                animate={{
+                  y: [0, -5, 0],
+                  scale: [1, 1.05, 1]
+                }}
+                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+              >
+                <rect x="85" y="85" width="30" height="30" rx="4" fill="url(#shieldGrad)" className="drop-shadow-[0_0_15px_rgba(0,229,255,0.4)]" />
                 <path d="M95 100 L98 103 L105 96" stroke="white" strokeWidth="2" fill="none" />
-              </g>
+              </motion.g>
 
               {/* Floating elements */}
               {[...Array(5)].map((_, i) => (

@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Shield, Menu, X, Github } from 'lucide-react';
+import { Menu, X, Github } from 'lucide-react';
 import { cn } from '../lib/utils';
 import GradientButton from '../components/GradientButton';
+import Logo from '../components/Logo';
 
 const Navbar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -28,15 +29,19 @@ const Navbar: React.FC = () => {
   return (
     <header
       className={cn(
-        'fixed top-0 left-0 right-0 z-50 transition-all duration-300 px-6 py-4',
-        scrolled ? 'bg-background-primary/80 backdrop-blur-lg border-b border-white/10' : 'bg-transparent'
+        'fixed top-0 left-0 right-0 z-50 transition-all duration-500 px-6',
+        scrolled
+          ? 'py-3 bg-background-primary/60 backdrop-blur-xl border-b border-white/5 shadow-lg shadow-black/20'
+          : 'py-5 bg-transparent'
       )}
     >
       <nav className="max-w-7xl mx-auto flex items-center justify-between">
-        <Link to="/" className="flex items-center gap-2 group">
-          <div className="p-2 rounded-xl bg-accent-primary/10 group-hover:bg-accent-primary/20 transition-colors">
-            <Shield className="w-6 h-6 text-accent-primary" />
-          </div>
+        <Link
+          to="/"
+          className="flex items-center gap-2 group outline-none focus-visible:ring-2 focus-visible:ring-accent-primary rounded-lg transition-all"
+          aria-label="PhishGuard AI Home"
+        >
+          <Logo className="text-accent-primary transition-transform duration-300 group-hover:scale-110" size={32} />
           <span className="text-xl font-heading font-bold tracking-tight">
             PhishGuard <span className="text-accent-primary">AI</span>
           </span>
@@ -49,11 +54,15 @@ const Navbar: React.FC = () => {
               key={link.href}
               to={link.href}
               className={cn(
-                'text-sm font-medium transition-colors hover:text-accent-primary',
-                location.pathname === link.href ? 'text-accent-primary' : 'text-text-secondary'
+                'text-sm font-medium transition-all duration-300 relative group/link outline-none focus-visible:text-accent-primary',
+                location.pathname === link.href ? 'text-accent-primary' : 'text-text-secondary hover:text-white'
               )}
             >
               {link.label}
+              <span className={cn(
+                'absolute -bottom-1 left-0 h-0.5 bg-accent-primary transition-all duration-300',
+                location.pathname === link.href ? 'w-full' : 'w-0 group-hover/link:w-full'
+              )} />
             </Link>
           ))}
           <div className="h-4 w-px bg-white/10 mx-2" />
@@ -61,7 +70,8 @@ const Navbar: React.FC = () => {
             href="https://github.com"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-text-secondary hover:text-white transition-colors"
+            className="text-text-secondary hover:text-white transition-colors outline-none focus-visible:ring-2 focus-visible:ring-accent-primary rounded-lg p-1"
+            aria-label="GitHub Repository"
           >
             <Github className="w-5 h-5" />
           </a>
@@ -70,8 +80,9 @@ const Navbar: React.FC = () => {
 
         {/* Mobile Toggle */}
         <button
-          className="md:hidden text-text-primary"
+          className="md:hidden text-text-primary p-2 hover:bg-white/5 rounded-lg transition-colors outline-none focus-visible:ring-2 focus-visible:ring-accent-primary"
           onClick={() => setIsOpen(!isOpen)}
+          aria-label={isOpen ? "Close menu" : "Open menu"}
         >
           {isOpen ? <X /> : <Menu />}
         </button>
@@ -81,10 +92,11 @@ const Navbar: React.FC = () => {
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            className="md:hidden bg-background-primary/95 backdrop-blur-xl border-b border-white/10 overflow-hidden"
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ type: "spring", stiffness: 300, damping: 30 }}
+            className="md:hidden bg-background-primary/98 backdrop-blur-2xl border-b border-white/5 overflow-hidden shadow-2xl"
           >
             <div className="flex flex-col gap-4 p-6">
               {navLinks.map((link) => (
@@ -93,7 +105,7 @@ const Navbar: React.FC = () => {
                   to={link.href}
                   onClick={() => setIsOpen(false)}
                   className={cn(
-                    'text-lg font-medium',
+                    'text-lg font-medium outline-none focus-visible:text-accent-primary',
                     location.pathname === link.href ? 'text-accent-primary' : 'text-text-secondary'
                   )}
                 >
