@@ -30,6 +30,15 @@ export default {
       },
       backgroundImage: {
         'glass-gradient': 'linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0))',
+      },
+      animation: {
+        'gradient-slow': 'gradient-slow 8s linear infinite',
+      },
+      keyframes: {
+        'gradient-slow': {
+          '0%': { 'background-position': '0% center' },
+          '100%': { 'background-position': '200% center' },
+        },
       }
     },
   },

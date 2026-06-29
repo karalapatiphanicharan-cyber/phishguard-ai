@@ -17,9 +17,9 @@ const GradientButton: React.FC<GradientButtonProps> = ({
   ...props
 }) => {
   const variants = {
-    primary: 'bg-gradient-to-r from-accent-primary to-accent-secondary text-white shadow-lg shadow-accent-primary/20',
-    secondary: 'bg-white/10 text-white hover:bg-white/20 backdrop-blur-sm',
-    outline: 'border border-accent-primary/50 text-accent-primary hover:bg-accent-primary/10',
+    primary: 'bg-gradient-to-r from-accent-primary to-accent-secondary text-white shadow-[0_0_20px_rgba(0,229,255,0.3)] hover:shadow-[0_0_30px_rgba(0,229,255,0.5)]',
+    secondary: 'bg-white/5 text-white hover:bg-white/10 backdrop-blur-md border border-white/10',
+    outline: 'border-2 border-accent-primary/30 text-accent-primary hover:bg-accent-primary/5 hover:border-accent-primary/60',
   };
 
   const sizes = {
@@ -30,8 +30,9 @@ const GradientButton: React.FC<GradientButtonProps> = ({
 
   return (
     <motion.button
-      whileHover={{ scale: 1.02 }}
-      whileTap={{ scale: 0.98 }}
+      whileHover={{ scale: 1.05, y: -2 }}
+      whileTap={{ scale: 0.95 }}
+      transition={{ type: "spring", stiffness: 400, damping: 15 }}
       className={cn(
         'relative overflow-hidden rounded-full transition-all duration-300',
         variants[variant],
