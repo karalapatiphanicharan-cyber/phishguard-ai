@@ -16,7 +16,7 @@ async def analyze_url(request: URLAnalysisRequest):
         raise HTTPException(status_code=400, detail="Invalid or malformed URL. Please include the protocol (e.g., https://)")
 
     try:
-        result = url_service.analyze_url_heuristics(url)
+        result = await url_service.analyze_url_heuristics(url)
         return result
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"An error occurred during analysis: {str(e)}")

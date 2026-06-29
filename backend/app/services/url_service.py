@@ -1,7 +1,8 @@
 from ..utils import url_utils
 from ..models.schemas import URLAnalysisResponse, URLDetails, SecurityChecks
+from .gemini_service import GeminiService
 
-def analyze_url_heuristics(url: str) -> URLAnalysisResponse:
+async def analyze_url_heuristics(url: str) -> URLAnalysisResponse:
     features = url_utils.extract_url_features(url)
 
     # Security Checks
@@ -67,6 +68,30 @@ def analyze_url_heuristics(url: str) -> URLAnalysisResponse:
         classification = "Potential Phishing"
         recommendation = "This URL shows strong indicators of a phishing attempt. Avoid it."
 
+    security_checks = SecurityChecks(
+        https=is_https,
+        contains_ip=has_ip,
+        contains_at_symbol=has_at,
+        url_shortener=shortener,
+        suspicious_keywords=keywords,
+        long_url=is_long,
+        many_subdomains=many_subs,
+        suspicious_tld=suspicious_tld,
+        non_standard_port=non_std_port,
+        encoded_characters=encoded
+    )
+
+    # Heuristic dictionary for AI context
+    heuristic_data = {
+        "risk_score": score,
+        "classification": classification,
+        "detected_issues": issues,
+        "security_checks": security_checks.model_dump()
+    }
+
+    # AI Analysis
+    ai_result = await GeminiService.analyze_url_threats(url, heuristic_data)
+
     return URLAnalysisResponse(
         status="success",
         risk_score=score,
@@ -80,18 +105,8 @@ def analyze_url_heuristics(url: str) -> URLAnalysisResponse:
             hostname=features["hostname"],
             port=str(features["port"]) if features["port"] else None
         ),
-        security_checks=SecurityChecks(
-            https=is_https,
-            contains_ip=has_ip,
-            contains_at_symbol=has_at,
-            url_shortener=shortener,
-            suspicious_keywords=keywords,
-            long_url=is_long,
-            many_subdomains=many_subs,
-            suspicious_tld=suspicious_tld,
-            non_standard_port=non_std_port,
-            encoded_characters=encoded
-        ),
+        security_checks=security_checks,
         detected_issues=issues,
-        recommendation=recommendation
+        recommendation=recommendation,
+        ai_analysis=ai_result
     )

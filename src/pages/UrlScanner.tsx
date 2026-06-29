@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Search, Shield, Globe, ExternalLink, AlertTriangle, CheckCircle, Info, ArrowRight } from 'lucide-react';
+import { Search, Shield, Globe, ExternalLink, AlertTriangle, CheckCircle, Info, ArrowRight, Brain, Target, ShieldAlert } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import AnimatedContainer from '../components/AnimatedContainer';
 import GlassCard from '../components/GlassCard';
@@ -17,20 +17,22 @@ const UrlScanner: React.FC = () => {
 
   const loadingMessages = [
     'Checking URL...',
-    'Analyzing domain...',
-    'Extracting features...',
-    'Running heuristic checks...',
-    'Generating report...',
+    'Extracting Features...',
+    'Running Heuristic Analysis...',
+    'Consulting AI Security Analyst...',
+    'Generating Threat Intelligence...',
+    'Preparing Final Report...',
   ];
 
   useEffect(() => {
     let interval: any;
     if (loading) {
       let index = 0;
+      setLoadingMessage(loadingMessages[0]);
       interval = setInterval(() => {
         index = (index + 1) % loadingMessages.length;
         setLoadingMessage(loadingMessages[index]);
-      }, 800);
+      }, 1000);
     }
     return () => clearInterval(interval);
   }, [loading]);
@@ -80,7 +82,7 @@ const UrlScanner: React.FC = () => {
       <AnimatedContainer>
         <SectionTitle
           title="URL Threat Analyzer"
-          subtitle="Deep scan URLs for phishing, malware, and social engineering indicators using intelligent heuristics."
+          subtitle="Deep scan URLs for phishing, malware, and social engineering indicators using intelligent heuristics and AI."
           align="center"
         />
       </AnimatedContainer>
@@ -185,6 +187,78 @@ const UrlScanner: React.FC = () => {
                     )}
                   </div>
                 </div>
+              </GlassCard>
+
+              {/* AI Analysis Section */}
+              <GlassCard className="p-8 border-accent-secondary/30 bg-accent-secondary/5">
+                <div className="flex items-center justify-between mb-6">
+                  <h4 className="text-sm font-bold text-accent-secondary uppercase tracking-wider flex items-center gap-2">
+                    <Brain className="w-5 h-5" />
+                    AI Security Insights
+                  </h4>
+                  {result.ai_analysis && (
+                    <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-accent-secondary/10 border border-accent-secondary/20">
+                      <span className="text-[10px] font-bold text-accent-secondary uppercase">Confidence: {result.ai_analysis.confidence}</span>
+                    </div>
+                  )}
+                </div>
+
+                {result.ai_analysis ? (
+                  <div className="space-y-8">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div className="space-y-2">
+                        <p className="text-xs text-text-secondary uppercase font-bold tracking-tighter flex items-center gap-1">
+                          <ShieldAlert className="w-3 h-3" /> Threat Type
+                        </p>
+                        <p className="text-lg font-heading font-bold text-white">{result.ai_analysis.threat_type}</p>
+                      </div>
+                      <div className="space-y-2">
+                        <p className="text-xs text-text-secondary uppercase font-bold tracking-tighter flex items-center gap-1">
+                          <Target className="w-3 h-3" /> Attack Goal
+                        </p>
+                        <p className="text-sm text-text-primary">{result.ai_analysis.attack_goal}</p>
+                      </div>
+                    </div>
+
+                    <div>
+                      <p className="text-xs text-text-secondary uppercase font-bold tracking-tighter mb-3">AI Summary</p>
+                      <p className="text-sm text-text-primary leading-relaxed p-4 rounded-xl bg-white/5 border border-white/5 italic">
+                        "{result.ai_analysis.summary}"
+                      </p>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                      <div>
+                        <p className="text-xs text-text-secondary uppercase font-bold tracking-tighter mb-4">Detailed Explanation</p>
+                        <ul className="space-y-3">
+                          {result.ai_analysis.explanation.map((item, i) => (
+                            <li key={i} className="flex items-start gap-3 text-sm text-text-primary">
+                              <span className="text-accent-secondary mt-1">•</span>
+                              {item}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                      <div>
+                        <p className="text-xs text-text-secondary uppercase font-bold tracking-tighter mb-4">AI Recommendations</p>
+                        <ul className="space-y-3">
+                          {result.ai_analysis.recommendations.map((item, i) => (
+                            <li key={i} className="flex items-start gap-3 text-sm text-text-primary">
+                              <CheckCircle className="w-4 h-4 text-success shrink-0" />
+                              {item}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="flex flex-col items-center justify-center py-10 text-center">
+                    <Brain className="w-12 h-12 text-white/10 mb-4 animate-pulse" />
+                    <p className="text-text-secondary text-sm">AI explanation temporarily unavailable.</p>
+                    <p className="text-[10px] text-text-secondary mt-1">Heuristic analysis remains active.</p>
+                  </div>
+                )}
               </GlassCard>
 
               {/* URL Details Card */}

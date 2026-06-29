@@ -7,3 +7,4 @@ validators
 python-whois
 requests
 python-dotenv
+google-genai

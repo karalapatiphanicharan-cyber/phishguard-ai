@@ -12,6 +12,15 @@ export interface NavLink {
   isExternal?: boolean;
 }
 
+export interface AIAnalysis {
+  summary: string;
+  threat_type: string;
+  confidence: string;
+  attack_goal: string;
+  explanation: string[];
+  recommendations: string[];
+}
+
 export interface URLAnalysisResponse {
   status: string;
   risk_score: number;
@@ -38,5 +47,20 @@ export interface URLAnalysisResponse {
     encoded_characters: boolean;
   };
   detected_issues: string[];
+  recommendation: string;
+  ai_analysis?: AIAnalysis;
+}
+
+export interface EmailAnalysisResponse {
+  status: string;
+  risk_score: number;
+  classification: string;
+  heuristics: {
+    detected_keywords: string[];
+    urgency_level: string;
+    suspicious_links_count: number;
+    has_sensitive_requests: boolean;
+  };
+  ai_analysis?: AIAnalysis;
   recommendation: string;
 }
