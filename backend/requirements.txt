@@ -1,0 +1,9 @@
+fastapi
+uvicorn
+pydantic
+pydantic-settings
+tldextract
+validators
+python-whois
+requests
+python-dotenv
