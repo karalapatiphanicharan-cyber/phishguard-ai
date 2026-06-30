@@ -35,3 +35,6 @@ SUSPICIOUS_PARAMS = [
     "token", "session", "redirect", "password", "verify", "login",
     "continue", "return", "auth", "url", "next", "destination"
 ]
+
+# Added for hostname check specifically to give more granular scores if needed
+HOSTNAME_KEYWORDS = SUSPICIOUS_PATHS + ["secure", "bank", "login", "verify", "account", "update", "signin", "support", "billing"]

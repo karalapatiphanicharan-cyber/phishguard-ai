@@ -12,18 +12,21 @@ def calculate_entropy(text: str) -> float:
     entropy = -sum(p * math.log2(p) for p in probabilities)
     return entropy
 
-def check_high_entropy(hostname: str, threshold: float = 3.8) -> dict:
+def check_high_entropy(hostname: str, threshold: float = 4.0) -> dict:
     """
     Checks if a hostname has unusually high entropy, which often indicates DGA or obfuscation.
     """
     # Remove dots and common TLD parts for a better entropy check of the core part
     parts = hostname.split('.')
     if len(parts) > 1:
-        core = "".join(parts[:-1])
+        # Check entropy of each part, and use the max
+        max_entropy = 0
+        for part in parts[:-1]:
+            if len(part) > 5:
+                max_entropy = max(max_entropy, calculate_entropy(part))
+        entropy = max_entropy
     else:
-        core = hostname
-
-    entropy = calculate_entropy(core)
+        entropy = calculate_entropy(hostname)
 
     if entropy > threshold:
         return {

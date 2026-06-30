@@ -17,6 +17,7 @@ from .email_checks.links import extract_links
 
 from ..config.weights import URL_WEIGHTS, EMAIL_WEIGHTS
 from ..config.suspicious_tlds import SUSPICIOUS_TLDS
+from ..config.keywords import HOSTNAME_KEYWORDS
 from ..utils import url_utils
 
 class DetectionEngine:
@@ -125,7 +126,7 @@ class DetectionEngine:
         if url_utils.is_url_shortener(domain, tld):
             score += URL_WEIGHTS["url_shortener"]
             indicators["url_shortener"] = {"detected": True}
-            reasons.append("URL uses a known shortener service")
+            reasons.append("URL uses a known shortener service which hides the destination")
         else:
             indicators["url_shortener"] = {"detected": False}
 
@@ -141,19 +142,55 @@ class DetectionEngine:
         is_https = parsed.scheme == "https"
         indicators["https"] = {"detected": not is_https}
         if not is_https:
-            score += 20 # Fixed weight for HTTPS
+            score += URL_WEIGHTS.get("https_missing", 25)
             reasons.append("HTTPS is not enabled")
+
+        # Hostname Keyword Check
+        hostname_lower = hostname.lower()
+        found_hostname_keywords = list(set([kw for kw in HOSTNAME_KEYWORDS if kw in hostname_lower]))
+        if found_hostname_keywords:
+            kw_score = len(found_hostname_keywords) * URL_WEIGHTS.get("keyword_match", 25)
+            score += kw_score
+            indicators["hostname_keywords"] = {"detected": True, "keywords": found_hostname_keywords}
+            reasons.append(f"Suspicious keywords in hostname: {', '.join(found_hostname_keywords)}")
+        else:
+            indicators["hostname_keywords"] = {"detected": False}
 
         score = min(score, 100)
 
+        # Better Classification and Threat Category
         classification = "Safe"
-        if score > 80: classification = "Potential Phishing"
-        elif score > 60: classification = "High Risk"
-        elif score > 30: classification = "Suspicious"
+        if score >= 80: classification = "High Risk"
+        elif score >= 60: classification = "Suspicious"
+        elif score > 30: classification = "Caution"
+
+        threat_category = "General Threat"
+        url_lower = url.lower()
+
+        if indicators["url_shortener"]["detected"]:
+            threat_category = "Shortened URL Abuse"
+        elif indicators["ip_address"]["detected"]:
+            threat_category = "Credential Harvesting"
+        elif indicators["typosquatting"]["detected"] or indicators["homograph"]["detected"]:
+             if any(kw in url_lower for kw in ["login", "sign", "verify", "account", "secure"]):
+                 threat_category = "Credential Phishing"
+             else:
+                 threat_category = "Typosquatting"
+        elif indicators["brand_impersonation"]["detected"]:
+             if any(kw in url_lower for kw in ["bank", "secure", "finance", "credit"]):
+                 threat_category = "Banking Phishing"
+             else:
+                 threat_category = "Brand Impersonation"
+        elif any(kw in url_lower for kw in ["bank", "secure", "finance", "login", "verify"]):
+             if "bank" in url_lower:
+                 threat_category = "Banking Phishing"
+             else:
+                 threat_category = "Credential Phishing"
 
         return {
             "score": score,
             "classification": classification,
+            "threat_category": threat_category,
             "reasons": reasons,
             "indicators": indicators,
             "details": {
@@ -208,7 +245,8 @@ class DetectionEngine:
         indicators["content"] = res
 
         if res["urgency_count"] > 0:
-            score += EMAIL_WEIGHTS["urgent_language"]
+            # Scale score by count
+            score += min(res["urgency_count"] * 20, 60)
             reasons.append(f"Urgent language detected ({res['urgency_count']} instances)")
 
         if res["credential_request"]:
@@ -249,23 +287,53 @@ class DetectionEngine:
             "results": link_results
         }
 
-        if max_link_score > 60:
-            score += EMAIL_WEIGHTS["suspicious_link"]
+        if max_link_score >= 80:
+            score += 80 # Severe penalty for high-risk link
+            reasons.append(f"Critical risk link detected (Risk Score: {max_link_score})")
+        elif max_link_score >= 60:
+            score += 50
             reasons.append(f"Highly suspicious link detected (Risk Score: {max_link_score})")
         elif len(links) > 5:
-            score += 10 # Extra penalty for many links
+            score += 30
             reasons.append("Unusually high number of links in email")
 
         score = min(score, 100)
 
+        # Better Classification and Threat Category
         classification = "Safe"
-        if score > 80: classification = "Potential Phishing"
-        elif score > 60: classification = "High Risk"
-        elif score > 30: classification = "Suspicious"
+        if score >= 80: classification = "High Risk"
+        elif score >= 60: classification = "Suspicious"
+        elif score > 30: classification = "Caution"
+
+        threat_category = "General Threat"
+        content_lower = (content + (subject or "")).lower()
+
+        if res["reward_detected"]:
+            threat_category = "Reward Scam"
+            if "lottery" in content_lower:
+                threat_category = "Lottery Scam"
+        elif res["threat_detected"]:
+            threat_category = "Extortion Scam"
+        elif "invoice" in content_lower or "billing" in content_lower:
+            threat_category = "Invoice Scam"
+        elif "password" in content_lower and ("reset" in content_lower or "expire" in content_lower):
+            threat_category = "Password Reset Scam"
+        elif indicators["sender"]["detected"] and indicators["sender"]["type"] == "impersonation":
+            if any(kw in content_lower for kw in ["wire", "transfer", "payment", "urgent"]):
+                threat_category = "Business Email Compromise"
+            else:
+                threat_category = "Brand Impersonation"
+        elif any(kw in content_lower for kw in ["ceo", "president", "director", "manager", "executive"]) and any(kw in content_lower for kw in ["urgent", "immediately", "asap"]):
+            threat_category = "Business Email Compromise"
+        elif res["credential_request"]:
+            threat_category = "Credential Phishing"
+        elif "bank" in content_lower:
+            threat_category = "Banking Phishing"
 
         return {
             "score": score,
             "classification": classification,
+            "threat_category": threat_category,
             "reasons": reasons,
             "indicators": indicators,
             "features": {

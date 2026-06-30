@@ -16,8 +16,10 @@ def check_email_content(subject: str, body: str) -> dict:
     # 1. Urgency/Pressure
     for kw in URGENCY_KEYWORDS:
         if kw in combined:
-            urgency_count += 1
-            findings.append(f"Urgency: {kw}")
+            # Count occurrences
+            count = combined.count(kw)
+            urgency_count += count
+            findings.append(f"Urgency indicator: {kw}")
 
     # 2. Credential Requests
     for kw in CREDENTIAL_KEYWORDS:
@@ -32,13 +34,19 @@ def check_email_content(subject: str, body: str) -> dict:
             findings.append(f"Threat: {kw}")
 
     # 4. Rewards/Scams
-    scam_keywords = ["lottery", "prize", "winner", "reward", "free money", "inheritance", "tax refund"]
+    scam_keywords = ["lottery", "prize", "winner", "reward", "free money", "inheritance", "tax refund", "gift card", "crypto", "bitcoin"]
     for kw in scam_keywords:
         if kw in combined:
             reward_detected = True
             findings.append(f"Scam indicator: {kw}")
 
-    # 5. Grammar/Formatting (Basic)
+    # 5. Business / Invoice specific
+    invoice_keywords = ["invoice", "billing", "payment", "overdue", "wire transfer", "bank details", "vendor"]
+    for kw in invoice_keywords:
+        if kw in combined:
+            findings.append(f"Financial indicator: {kw}")
+
+    # 6. Grammar/Formatting (Basic)
     alnum_chars = [c for c in combined if c.isalnum()]
     cap_letters = [c for c in (f"{subject or ''} {body or ''}") if c.isupper()]
     cap_percent = (len(cap_letters) / len(alnum_chars) * 100) if alnum_chars else 0
