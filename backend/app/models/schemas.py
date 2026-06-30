@@ -32,6 +32,7 @@ class AIAnalysis(BaseModel):
     attack_goal: str
     explanation: List[str]
     recommendations: List[str]
+    likely_target: Optional[str] = None
 
 class URLAnalysisResponse(BaseModel):
     status: str
@@ -47,10 +48,23 @@ class EmailAnalysisRequest(BaseModel):
     content: str = Field(..., min_length=10, max_length=10000)
 
 class EmailHeuristicResults(BaseModel):
+    sender: Optional[str] = None
+    reply_to: Optional[str] = None
+    subject: Optional[str] = None
     detected_keywords: List[str]
     urgency_level: str
     suspicious_links_count: int
     has_sensitive_requests: bool
+    detected_links: List[str] = []
+    email_length: int
+    urgent_words_count: int
+    suspicious_keywords_count: int
+    capital_letters_percent: float
+    excessive_punctuation: bool
+    threat_language: bool
+    brand_impersonation: bool
+    grammar_mistakes: bool
+    attachments_count: int = 0
 
 class EmailAnalysisResponse(BaseModel):
     status: str
@@ -59,3 +73,4 @@ class EmailAnalysisResponse(BaseModel):
     heuristics: EmailHeuristicResults
     ai_analysis: Optional[AIAnalysis] = None
     recommendation: str
+    detected_issues: List[str] = []

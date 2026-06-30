@@ -65,7 +65,8 @@ class GeminiService:
             "confidence": "Low, Medium, or High",
             "attack_goal": "What the attacker is likely trying to achieve.",
             "explanation": ["Point 1", "Point 2", ...],
-            "recommendations": ["Action 1", "Action 2", ...]
+            "recommendations": ["Action 1", "Action 2", ...],
+            "likely_target": "Who this attack is likely targeting."
         }}
         """
 
@@ -105,16 +106,24 @@ class GeminiService:
         \"\"\"{content}\"\"\"
 
         Heuristic Findings:
-        - Detected Keywords: {', '.join(heuristic_results.get('detected_keywords', []))}
-        - Urgency Level: {heuristic_results.get('urgency_level')}
-        - Suspicious Links Count: {heuristic_results.get('suspicious_links_count')}
+        - Risk Score: {heuristic_results.get('risk_score')}/100
+        - Classification: {heuristic_results.get('classification')}
+        - Detected Issues: {', '.join(heuristic_results.get('detected_issues', []))}
+        - Sender: {heuristic_results.get('sender')}
+        - Subject: {heuristic_results.get('subject')}
+        - Detected Links Count: {heuristic_results.get('suspicious_links_count')}
+        - Urgent Words: {heuristic_results.get('urgent_words_count')}
         - Sensitive Data Requests: {heuristic_results.get('has_sensitive_requests')}
+        - Brand Impersonation: {heuristic_results.get('brand_impersonation')}
+        - Threat Language: {heuristic_results.get('threat_language')}
+        - Grammar Quality: {'Poor' if heuristic_results.get('grammar_mistakes') else 'Professional'}
 
         Provide a detailed explanation and cybersecurity insights in JSON format.
 
         Rules:
         - Think like a cybersecurity analyst.
-        - Detect social engineering tactics (urgency, authority, fear, scarcity).
+        - Detect social engineering tactics (urgency, authority, fear, scarcity, reward).
+        - Analyze the relationship between the sender, content, and likely attack goal.
         - Return ONLY a valid JSON object.
 
         Expected JSON structure:
@@ -124,7 +133,8 @@ class GeminiService:
             "confidence": "Low, Medium, or High",
             "attack_goal": "What the attacker is likely trying to achieve.",
             "explanation": ["Point 1", "Point 2", ...],
-            "recommendations": ["Action 1", "Action 2", ...]
+            "recommendations": ["Action 1", "Action 2", ...],
+            "likely_target": "Who this attack is likely targeting (e.g., General Users, Finance Dept, Amazon Customers)."
         }}
         """
 
