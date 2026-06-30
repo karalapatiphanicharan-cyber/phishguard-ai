@@ -1,64 +1,70 @@
-from typing import List, Dict, Any
-from ..models.schemas import EmailAnalysisResponse, EmailHeuristicResults, AIAnalysis
+from ..models.schemas import EmailAnalysisResponse, EmailHeuristicResults
 from .gemini_service import GeminiService
-from ..analyzers.email_analyzer import EmailAnalyzer
-import logging
-
-logger = logging.getLogger(__name__)
+from ..analyzers.detection_engine import DetectionEngine
 
 async def analyze_email(content: str) -> EmailAnalysisResponse:
-    # Extract features using the new analyzer
-    features = EmailAnalyzer.extract_features(content)
+    # Use the new DetectionEngine
+    result = DetectionEngine.analyze_email(content)
 
-    # Calculate risk score and classification
-    heuristic_results = EmailAnalyzer.calculate_risk_score(features)
+    indicators = result["indicators"]
+    features = result["features"]
+    content_res = indicators["content"]
 
-    # Combine features and heuristic results for the response
-    full_heuristics = {**features, **heuristic_results}
+    urgency_level = "Low"
+    if content_res["urgency_count"] >= 3 or content_res["threat_detected"]:
+        urgency_level = "Critical"
+    elif content_res["urgency_count"] >= 1:
+        urgency_level = "High"
 
-    # AI Analysis
-    ai_result = None
-    try:
-        ai_result = await GeminiService.analyze_email_threats(content, full_heuristics)
-    except Exception as e:
-        logger.error(f"AI Analysis failed: {str(e)}")
+    heuristics = EmailHeuristicResults(
+        sender=features["sender"],
+        reply_to=features["reply_to"],
+        subject=features["subject"],
+        detected_keywords=content_res["findings"],
+        urgency_level=urgency_level,
+        suspicious_links_count=indicators["links"]["count"],
+        has_sensitive_requests=content_res["credential_request"],
+        detected_links=features["links"],
+        email_length=features["email_length"],
+        urgent_words_count=content_res["urgency_count"],
+        suspicious_keywords_count=len(content_res["findings"]),
+        capital_letters_percent=content_res["cap_percent"],
+        excessive_punctuation=content_res["excessive_punctuation"],
+        threat_language=content_res["threat_detected"],
+        brand_impersonation=indicators["sender"]["type"] == "impersonation" if indicators["sender"]["detected"] else False,
+        grammar_mistakes=False, # We don't have a specific grammar check now, could add to content_analysis
+        attachments_count=0,
+        # New indicators
+        sender_spoofed=indicators["sender"]["detected"],
+        reply_to_mismatch=indicators["sender"]["type"] == "mismatch" if indicators["sender"]["detected"] else False,
+        reward_language=content_res["reward_detected"]
+    )
 
-    # Prepare recommendation based on score
-    score = heuristic_results["risk_score"]
-    if score <= 30:
-        recommendation = "This email appears to be legitimate or low risk. However, always remain vigilant."
-    elif score <= 60:
-        recommendation = "This email has suspicious elements. Do not click any links or share sensitive information until verified."
-    elif score <= 80:
-        recommendation = "This email looks like a phishing attempt. Exercise extreme caution and do not interact with its content."
-    else:
-        recommendation = "Strong phishing indicators detected. This is highly likely a malicious attempt. Mark as spam and delete immediately."
+    heuristic_data = {
+        "risk_score": result["score"],
+        "classification": result["classification"],
+        "detected_issues": result["reasons"],
+        "heuristics": heuristics.model_dump(),
+        "indicators": indicators
+    }
 
-    # Return structured response
+    ai_result = await GeminiService.analyze_email_threats(content, heuristic_data)
+
+    recommendation = "This email appears to be safe."
+    if result["score"] > 80:
+        recommendation = "This email is highly likely to be a phishing attempt. Do not click any links or provide any information."
+    elif result["score"] > 60:
+        recommendation = "Be very careful. This email has multiple high-risk indicators."
+    elif result["score"] > 30:
+        recommendation = "Treat this email with suspicion. Verify the sender before taking any action."
+
     return EmailAnalysisResponse(
         status="success",
-        risk_score=score,
-        classification=heuristic_results["classification"],
-        heuristics=EmailHeuristicResults(
-            sender=features["sender"],
-            reply_to=features["reply_to"],
-            subject=features["subject"],
-            detected_keywords=features["detected_keywords"],
-            urgency_level=heuristic_results["urgency_level"],
-            suspicious_links_count=features["suspicious_links_count"],
-            has_sensitive_requests=features["has_sensitive_requests"],
-            detected_links=features["detected_links"],
-            email_length=features["email_length"],
-            urgent_words_count=features["urgent_words_count"],
-            suspicious_keywords_count=features["suspicious_keywords_count"],
-            capital_letters_percent=features["capital_letters_percent"],
-            excessive_punctuation=features["excessive_punctuation"],
-            threat_language=features["threat_language"],
-            brand_impersonation=features["brand_impersonation"],
-            grammar_mistakes=features["grammar_mistakes"],
-            attachments_count=features["attachments_count"]
-        ),
+        risk_score=result["score"],
+        classification=result["classification"],
+        heuristics=heuristics,
         ai_analysis=ai_result,
         recommendation=recommendation,
-        detected_issues=heuristic_results["detected_issues"]
+        detected_issues=result["reasons"],
+        indicators=indicators
     )

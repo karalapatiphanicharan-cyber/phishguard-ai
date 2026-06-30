@@ -46,6 +46,10 @@ export interface URLAnalysisResponse {
     suspicious_tld: boolean;
     non_standard_port: boolean;
     encoded_characters: boolean;
+    typosquatting: boolean;
+    homograph: boolean;
+    high_entropy: boolean;
+    brand_impersonation: boolean;
   };
   detected_issues: string[];
   recommendation: string;
@@ -74,6 +78,9 @@ export interface EmailAnalysisResponse {
     brand_impersonation: boolean;
     grammar_mistakes: boolean;
     attachments_count: number;
+    sender_spoofed: boolean;
+    reply_to_mismatch: boolean;
+    reward_language: boolean;
   };
   ai_analysis?: AIAnalysis;
   recommendation: string;

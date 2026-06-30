@@ -8,3 +8,4 @@ python-whois
 requests
 python-dotenv
 google-genai
+python-Levenshtein
