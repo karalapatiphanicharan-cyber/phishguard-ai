@@ -8,6 +8,7 @@ import SectionTitle from '../components/SectionTitle';
 import ThreatDashboard from '../components/ThreatDashboard';
 import EmptyState from '../components/EmptyState';
 import type { URLAnalysisResponse } from '../types';
+import { saveToHistory } from '../lib/storage';
 
 const UrlScanner: React.FC = () => {
   const [url, setUrl] = useState('');
@@ -64,6 +65,7 @@ const UrlScanner: React.FC = () => {
 
       const data = await response.json();
       setResult(data);
+      saveToHistory('url', data);
     } catch (err: any) {
       setError(err.message || 'An unexpected error occurred. Please check if the backend is running.');
     } finally {

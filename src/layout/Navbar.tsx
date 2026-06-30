@@ -23,6 +23,7 @@ const Navbar: React.FC = () => {
     { label: 'Home', href: '/' },
     { label: 'URL Scanner', href: '/url-scanner' },
     { label: 'Email Scanner', href: '/email-scanner' },
+    { label: 'Intelligence', href: '/dashboard' },
     { label: 'About', href: '/about' },
   ];
 

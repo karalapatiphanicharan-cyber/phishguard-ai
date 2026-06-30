@@ -3,6 +3,7 @@ import Layout from '../layout/Layout';
 import Home from '../pages/Home';
 import UrlScanner from '../pages/UrlScanner';
 import EmailScanner from '../pages/EmailScanner';
+import Dashboard from '../pages/Dashboard';
 import About from '../pages/About';
 import NotFound from '../pages/NotFound';
 
@@ -22,6 +23,10 @@ export const router = createBrowserRouter([
       {
         path: 'email-scanner',
         element: <EmailScanner />,
+      },
+      {
+        path: 'dashboard',
+        element: <Dashboard />,
       },
       {
         path: 'about',
