@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field, HttpUrl
-from typing import List, Optional
+from typing import List, Optional, Dict, Any
 
 class URLAnalysisRequest(BaseModel):
     url: str = Field(..., max_length=2048)
@@ -24,6 +24,11 @@ class SecurityChecks(BaseModel):
     suspicious_tld: bool
     non_standard_port: bool
     encoded_characters: bool
+    # New advanced checks for dashboard compatibility (mapped from indicators)
+    typosquatting: bool = False
+    homograph: bool = False
+    high_entropy: bool = False
+    brand_impersonation: bool = False
 
 class AIAnalysis(BaseModel):
     summary: str
@@ -43,6 +48,7 @@ class URLAnalysisResponse(BaseModel):
     detected_issues: List[str]
     recommendation: str
     ai_analysis: Optional[AIAnalysis] = None
+    indicators: Optional[Dict[str, Any]] = None
 
 class EmailAnalysisRequest(BaseModel):
     content: str = Field(..., min_length=10, max_length=10000)
@@ -65,6 +71,10 @@ class EmailHeuristicResults(BaseModel):
     brand_impersonation: bool
     grammar_mistakes: bool
     attachments_count: int = 0
+    # New indicators
+    sender_spoofed: bool = False
+    reply_to_mismatch: bool = False
+    reward_language: bool = False
 
 class EmailAnalysisResponse(BaseModel):
     status: str
@@ -74,3 +84,4 @@ class EmailAnalysisResponse(BaseModel):
     ai_analysis: Optional[AIAnalysis] = None
     recommendation: str
     detected_issues: List[str] = []
+    indicators: Optional[Dict[str, Any]] = None

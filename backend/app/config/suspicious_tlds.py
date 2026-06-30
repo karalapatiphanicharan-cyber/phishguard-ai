@@ -1,0 +1,28 @@
+# Suspicious TLDs and their base risk scores
+SUSPICIOUS_TLDS = {
+    "xyz": 15,
+    "top": 15,
+    "click": 15,
+    "gq": 20,
+    "cf": 20,
+    "ml": 20,
+    "tk": 20,
+    "work": 10,
+    "live": 10,
+    "site": 10,
+    "pw": 15,
+    "ga": 15,
+    "bid": 15,
+    "icu": 15,
+    "date": 15,
+    "win": 15,
+    "buzz": 10,
+    "monster": 15,
+    "online": 5,
+    "shop": 5,
+    "info": 5,
+    "support": 10,
+    "help": 10,
+    "account": 15,
+    "security": 15
+}

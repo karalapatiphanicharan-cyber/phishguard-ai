@@ -13,7 +13,8 @@ SUSPICIOUS_TLDS = [
 ]
 
 URL_SHORTENERS = [
-    "bit.ly", "goo.gl", "t.co", "tinyurl.com", "is.gd", "buff.ly", "adf.ly", "bit.do"
+    "bit.ly", "goo.gl", "t.co", "tinyurl.com", "is.gd", "buff.ly", "adf.ly", "bit.do",
+    "ow.ly", "rb.gy", "shorturl.at", "tiny.cc", "rebrandly.com", "t.ly", "bl.ink"
 ]
 
 def extract_url_features(url: str):

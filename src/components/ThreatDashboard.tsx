@@ -33,7 +33,7 @@ interface ThreatDashboardProps {
 }
 
 const ThreatDashboard: React.FC<ThreatDashboardProps> = ({ result, type, onClear, onAnalyzeAnother }) => {
-  const isUrl = (res: any): res is URLAnalysisResponse => type === 'url';
+  const isUrl = (_res: any): _res is URLAnalysisResponse => type === 'url';
 
   // Extract common data
   const score = result.risk_score;
@@ -88,19 +88,25 @@ const ThreatDashboard: React.FC<ThreatDashboardProps> = ({ result, type, onClear
 
   const getIndicators = () => {
      if (isUrl(result)) {
+        const s = result.security_checks;
         return [
-          { label: 'Typosquatting', status: result.security_checks.suspicious_tld ? 'detected' : 'safe', severity: 'high' },
-          { label: 'IP Address Host', status: result.security_checks.contains_ip ? 'detected' : 'safe', severity: 'critical' },
-          { label: 'URL Shortener', status: result.security_checks.url_shortener ? 'detected' : 'safe', severity: 'medium' },
-          { label: 'Encoding Trickery', status: result.security_checks.encoded_characters ? 'detected' : 'safe', severity: 'high' },
+          { label: 'Typosquatting', status: s.typosquatting ? 'detected' : 'safe', severity: 'critical' },
+          { label: 'Homograph Attack', status: s.homograph ? 'detected' : 'safe', severity: 'critical' },
+          { label: 'Domain Entropy', status: s.high_entropy ? 'detected' : 'safe', severity: 'high' },
+          { label: 'Brand Spoofing', status: s.brand_impersonation ? 'detected' : 'safe', severity: 'high' },
+          { label: 'IP Address Host', status: s.contains_ip ? 'detected' : 'safe', severity: 'critical' },
+          { label: 'URL Shortener', status: s.url_shortener ? 'detected' : 'safe', severity: 'medium' },
+          { label: 'Encoding Trickery', status: s.encoded_characters ? 'detected' : 'safe', severity: 'high' },
         ] as const;
      } else {
         const h = result.heuristics;
         return [
+          { label: 'Sender Spoofing', status: h.sender_spoofed ? 'detected' : 'safe', severity: 'critical' },
           { label: 'Urgent Language', status: h.urgent_words_count > 0 ? 'detected' : 'safe', severity: 'high' },
           { label: 'Credential Request', status: h.has_sensitive_requests ? 'detected' : 'safe', severity: 'critical' },
           { label: 'Brand Impersonation', status: h.brand_impersonation ? 'detected' : 'safe', severity: 'critical' },
           { label: 'Threat Language', status: h.threat_language ? 'detected' : 'safe', severity: 'high' },
+          { label: 'Reward / Scam', status: h.reward_language ? 'detected' : 'safe', severity: 'high' },
         ] as const;
      }
   };
