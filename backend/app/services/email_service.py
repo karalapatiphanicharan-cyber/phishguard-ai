@@ -1,4 +1,4 @@
-from ..models.schemas import EmailAnalysisResponse, EmailHeuristicResults
+from ..models.schemas import EmailAnalysisResponse, EmailHeuristicResults, AIAnalysis
 from .gemini_service import GeminiService
 from ..analyzers.detection_engine import DetectionEngine
 
@@ -32,7 +32,7 @@ async def analyze_email(content: str) -> EmailAnalysisResponse:
         excessive_punctuation=content_res["excessive_punctuation"],
         threat_language=content_res["threat_detected"],
         brand_impersonation=indicators["sender"]["type"] == "impersonation" if indicators["sender"]["detected"] else False,
-        grammar_mistakes=False, # We don't have a specific grammar check now, could add to content_analysis
+        grammar_mistakes=False,
         attachments_count=0,
         # New indicators
         sender_spoofed=indicators["sender"]["detected"],
@@ -45,15 +45,42 @@ async def analyze_email(content: str) -> EmailAnalysisResponse:
         "classification": result["classification"],
         "detected_issues": result["reasons"],
         "heuristics": heuristics.model_dump(),
-        "indicators": indicators
+        "indicators": indicators,
+        "threat_category": result["threat_category"]
     }
 
     ai_result = await GeminiService.analyze_email_threats(content, heuristic_data)
 
+    # Heuristic Fallback
+    if ai_result is None:
+        explanation = result["reasons"]
+        recommendations = [
+            "Do not click on any links in this email.",
+            "Do not download or open any attachments.",
+            "Verify the sender's identity through a trusted channel.",
+            "Report this email as phishing to your email provider."
+        ]
+        if result["score"] < 30:
+            recommendations = ["Continue to use caution with unsolicited emails."]
+
+        summary = f"Heuristic analysis classifies this email as {result['classification'].lower()}."
+        if result["reasons"]:
+            summary += f" Detection reasons: {', '.join(result['reasons'][:2])}."
+
+        ai_result = AIAnalysis(
+            summary=summary,
+            threat_type=result["threat_category"],
+            confidence="High" if result["score"] > 80 else "Medium",
+            attack_goal="Credential harvesting or social engineering" if result["score"] > 30 else "Unknown",
+            explanation=explanation,
+            recommendations=recommendations,
+            likely_target="General Email Recipient"
+        )
+
     recommendation = "This email appears to be safe."
-    if result["score"] > 80:
+    if result["score"] >= 80:
         recommendation = "This email is highly likely to be a phishing attempt. Do not click any links or provide any information."
-    elif result["score"] > 60:
+    elif result["score"] >= 60:
         recommendation = "Be very careful. This email has multiple high-risk indicators."
     elif result["score"] > 30:
         recommendation = "Treat this email with suspicion. Verify the sender before taking any action."
