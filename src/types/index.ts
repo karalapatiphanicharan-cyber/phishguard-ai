@@ -19,6 +19,7 @@ export interface AIAnalysis {
   attack_goal: string;
   explanation: string[];
   recommendations: string[];
+  likely_target?: string;
 }
 
 export interface URLAnalysisResponse {
@@ -56,11 +57,25 @@ export interface EmailAnalysisResponse {
   risk_score: number;
   classification: string;
   heuristics: {
+    sender?: string;
+    reply_to?: string;
+    subject?: string;
     detected_keywords: string[];
     urgency_level: string;
     suspicious_links_count: number;
     has_sensitive_requests: boolean;
+    detected_links: string[];
+    email_length: number;
+    urgent_words_count: number;
+    suspicious_keywords_count: number;
+    capital_letters_percent: number;
+    excessive_punctuation: boolean;
+    threat_language: boolean;
+    brand_impersonation: boolean;
+    grammar_mistakes: boolean;
+    attachments_count: number;
   };
   ai_analysis?: AIAnalysis;
   recommendation: string;
+  detected_issues: string[];
 }
