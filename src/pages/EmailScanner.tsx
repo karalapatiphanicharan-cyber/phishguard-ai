@@ -8,6 +8,7 @@ import SectionTitle from '../components/SectionTitle';
 import ThreatDashboard from '../components/ThreatDashboard';
 import EmptyState from '../components/EmptyState';
 import type { EmailAnalysisResponse } from '../types';
+import { saveToHistory } from '../lib/storage';
 
 const EXAMPLE_EMAIL = `From: support@amaz0n-security.xyz
 Subject: Important: Verify Your Account Immediately
@@ -78,6 +79,7 @@ const EmailScanner: React.FC = () => {
 
       const data = await response.json();
       setResult(data);
+      saveToHistory('email', data);
     } catch (err: any) {
       setError(err.message || 'An unexpected error occurred. Please check if the backend is running.');
     } finally {
