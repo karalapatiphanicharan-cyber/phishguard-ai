@@ -29,7 +29,7 @@ const ConfidenceBar: React.FC<ConfidenceBarProps> = ({ confidence }) => {
   return (
     <div className="space-y-3">
       <div className="flex justify-between items-center">
-        <span className="text-[10px] font-bold text-text-secondary uppercase tracking-widest">AI Confidence Meter</span>
+        <span className="text-[10px] font-bold text-text-secondary uppercase tracking-widest">Detection Confidence</span>
         <span className={`text-xs font-bold uppercase ${
           confidence.toLowerCase() === 'high' ? 'text-success' :
           confidence.toLowerCase() === 'medium' ? 'text-warning' : 'text-danger'

@@ -5,7 +5,7 @@ test('verify loading screen and home page', async ({ page }) => {
   await page.goto('http://localhost:5173/');
 
   // Verify loading screen exists initially
-  const loader = page.getByRole('heading', { name: 'PHISHGUARD AI' });
+  const loader = page.getByRole('heading', { name: 'PHISHGUARD ENTERPRISE' });
   await expect(loader).toBeVisible();
 
   // Wait for loader to disappear
@@ -21,7 +21,7 @@ test('verify navbar refinement', async ({ page }) => {
   await page.waitForTimeout(1500);
 
   // Check the logo link Specifically in header
-  const logoLink = page.locator('header').getByRole('link', { name: 'PhishGuard AI Home' });
+  const logoLink = page.locator('header').getByRole('link', { name: 'PhishGuard Enterprise Home' });
   await expect(logoLink).toBeVisible();
 
   // Check active link indicator

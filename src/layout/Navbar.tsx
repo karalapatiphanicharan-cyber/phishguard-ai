@@ -1,126 +1,127 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { Shield, Menu, X, Github } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X, Github } from 'lucide-react';
-import { cn } from '../lib/utils';
-import GradientButton from '../components/GradientButton';
 import Logo from '../components/Logo';
 
 const Navbar: React.FC = () => {
-  const [isOpen, setIsOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const location = useLocation();
 
   useEffect(() => {
     const handleScroll = () => {
-      setScrolled(window.scrollY > 20);
+      setIsScrolled(window.scrollY > 20);
     };
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   const navLinks = [
-    { label: 'Home', href: '/' },
-    { label: 'URL Scanner', href: '/url-scanner' },
-    { label: 'Email Scanner', href: '/email-scanner' },
-    { label: 'Intelligence', href: '/dashboard' },
-    { label: 'About', href: '/about' },
+    { name: 'Home', path: '/' },
+    { name: 'URL Scanner', path: '/url-scanner' },
+    { name: 'Email Scanner', path: '/email-scanner' },
+    { name: 'Intelligence', path: '/dashboard' },
+    { name: 'About', path: '/about' },
   ];
 
   return (
-    <header
-      className={cn(
-        'fixed top-0 left-0 right-0 z-50 transition-all duration-500 px-6',
-        scrolled
-          ? 'py-3 bg-background-primary/60 backdrop-blur-xl border-b border-white/5 shadow-lg shadow-black/20'
-          : 'py-5 bg-transparent'
-      )}
+    <nav
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 px-6 ${
+        isScrolled ? 'py-4' : 'py-8'
+      }`}
     >
-      <nav className="max-w-7xl mx-auto flex items-center justify-between">
+      <div className={`max-w-7xl mx-auto rounded-2xl transition-all duration-500 flex items-center justify-between px-8 ${
+        isScrolled ? 'bg-background-secondary/80 backdrop-blur-xl border border-white/10 shadow-2xl py-3' : 'bg-transparent py-0'
+      }`}>
         <Link
           to="/"
-          className="flex items-center gap-2 group outline-none focus-visible:ring-2 focus-visible:ring-accent-primary rounded-lg transition-all"
-          aria-label="PhishGuard AI Home"
+          className="flex items-center gap-3 group outline-none focus-visible:ring-2 focus-visible:ring-accent-primary rounded-lg"
+          aria-label="PhishGuard Home"
         >
-          <Logo className="text-accent-primary transition-transform duration-300 group-hover:scale-110" size={32} />
-          <span className="text-xl font-heading font-bold tracking-tight">
-            PhishGuard <span className="text-accent-primary">AI</span>
+          <Logo size={32} className="text-accent-primary group-hover:rotate-12 transition-transform" />
+          <span className="text-2xl font-heading font-bold text-white tracking-tighter">
+            PhishGuard <span className="text-accent-primary underline decoration-2 underline-offset-4">Enterprise</span>
           </span>
         </Link>
 
         {/* Desktop Nav */}
-        <div className="hidden md:flex items-center gap-8">
+        <div className="hidden md:flex items-center gap-1">
           {navLinks.map((link) => (
             <Link
-              key={link.href}
-              to={link.href}
-              className={cn(
-                'text-sm font-medium transition-all duration-300 relative group/link outline-none focus-visible:text-accent-primary',
-                location.pathname === link.href ? 'text-accent-primary' : 'text-text-secondary hover:text-white'
-              )}
+              key={link.name}
+              to={link.path}
+              className={`px-5 py-2 rounded-xl text-sm font-bold transition-all outline-none focus-visible:ring-2 focus-visible:ring-accent-primary ${
+                location.pathname === link.path
+                  ? 'text-accent-primary bg-accent-primary/10'
+                  : 'text-text-secondary hover:text-white hover:bg-white/5'
+              }`}
             >
-              {link.label}
-              <span className={cn(
-                'absolute -bottom-1 left-0 h-0.5 bg-accent-primary transition-all duration-300',
-                location.pathname === link.href ? 'w-full' : 'w-0 group-hover/link:w-full'
-              )} />
+              {link.name}
             </Link>
           ))}
-          <div className="h-4 w-px bg-white/10 mx-2" />
+          <div className="w-px h-6 bg-white/10 mx-4" />
           <a
             href="https://github.com"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-text-secondary hover:text-white transition-colors outline-none focus-visible:ring-2 focus-visible:ring-accent-primary rounded-lg p-1"
+            className="p-2 text-text-secondary hover:text-white transition-colors outline-none focus-visible:ring-2 focus-visible:ring-accent-primary rounded-lg"
             aria-label="GitHub Repository"
           >
             <Github className="w-5 h-5" />
           </a>
-          <GradientButton size="sm">Get Started</GradientButton>
+          <Link to="/url-scanner" className="ml-4">
+            <button className="px-6 py-2.5 rounded-xl bg-accent-primary text-background-primary font-bold text-sm hover:scale-105 active:scale-95 transition-all shadow-[0_0_20px_rgba(0,229,255,0.3)]">
+              Get Started
+            </button>
+          </Link>
         </div>
 
         {/* Mobile Toggle */}
         <button
-          className="md:hidden text-text-primary p-2 hover:bg-white/5 rounded-lg transition-colors outline-none focus-visible:ring-2 focus-visible:ring-accent-primary"
-          onClick={() => setIsOpen(!isOpen)}
-          aria-label={isOpen ? "Close menu" : "Open menu"}
+          className="md:hidden p-2 text-white outline-none focus-visible:ring-2 focus-visible:ring-accent-primary rounded-lg"
+          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
         >
-          {isOpen ? <X /> : <Menu />}
+          {isMobileMenuOpen ? <X /> : <Menu />}
         </button>
-      </nav>
+      </div>
 
-      {/* Mobile Nav */}
+      {/* Mobile Menu */}
       <AnimatePresence>
-        {isOpen && (
+        {isMobileMenuOpen && (
           <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ type: "spring", stiffness: 300, damping: 30 }}
-            className="md:hidden bg-background-primary/98 backdrop-blur-2xl border-b border-white/5 overflow-hidden shadow-2xl"
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            className="md:hidden absolute top-full left-6 right-6 mt-4 rounded-2xl bg-background-secondary border border-white/10 shadow-2xl overflow-hidden"
           >
-            <div className="flex flex-col gap-4 p-6">
+            <div className="p-6 flex flex-col gap-4">
               {navLinks.map((link) => (
                 <Link
-                  key={link.href}
-                  to={link.href}
-                  onClick={() => setIsOpen(false)}
-                  className={cn(
-                    'text-lg font-medium outline-none focus-visible:text-accent-primary',
-                    location.pathname === link.href ? 'text-accent-primary' : 'text-text-secondary'
-                  )}
+                  key={link.name}
+                  to={link.path}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className={`px-4 py-3 rounded-xl font-bold transition-all ${
+                    location.pathname === link.path
+                      ? 'text-accent-primary bg-accent-primary/10'
+                      : 'text-text-secondary hover:text-white hover:bg-white/5'
+                  }`}
                 >
-                  {link.label}
+                  {link.name}
                 </Link>
               ))}
-              <div className="flex items-center gap-4 pt-4 border-t border-white/10">
-                <GradientButton className="w-full">Get Started</GradientButton>
-              </div>
+              <div className="h-px bg-white/10 my-2" />
+              <Link to="/url-scanner" onClick={() => setIsMobileMenuOpen(false)}>
+                <button className="w-full py-4 rounded-xl bg-accent-primary text-background-primary font-bold shadow-lg">
+                  Get Started Now
+                </button>
+              </Link>
             </div>
           </motion.div>
         )}
       </AnimatePresence>
-    </header>
+    </nav>
   );
 };
 

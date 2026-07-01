@@ -28,7 +28,7 @@ const Logo: React.FC<LogoProps> = ({ className, size = 32 }) => {
         strokeLinecap="round"
         strokeLinejoin="round"
       />
-      {/* Modern detail: AI node in the center of P's loop */}
+      {/* Modern detail: Security core in the center of P's loop */}
       <circle cx="55" cy="45" r="3" fill="#050816" />
     </svg>
   );

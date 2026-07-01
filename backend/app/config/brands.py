@@ -26,5 +26,18 @@ LEGITIMATE_BRANDS = [
     "binance",
     "coinbase",
     "metamask",
-    "blockchain"
+    "blockchain",
+    "github",
+    "steam",
+    "discord",
+    "sbi",
+    "icici",
+    "hdfc",
+    "axis",
+    "upi",
+    "phonepe",
+    "gpay",
+    "paytm",
+    "azure",
+    "aws"
 ]

@@ -4,20 +4,21 @@ URGENCY_KEYWORDS = [
     "immediately", "verify now", "act fast", "account suspended",
     "limited time", "payment failed", "security alert", "password reset",
     "urgent", "asap", "hurry", "expired", "action required",
-    "unauthorized access", "prevent suspension", "locked"
+    "unauthorized access", "prevent suspension", "locked", "confirm"
 ]
 
 CREDENTIAL_KEYWORDS = [
     "password", "otp", "credit card", "bank", "login",
     "pin", "verification code", "credentials", "social security",
-    "ssn", "tax id", "passport", "cvv", "recovery phrase", "private key"
+    "ssn", "tax id", "passport", "cvv", "recovery phrase", "private key",
+    "auth", "authenticate", "session", "token"
 ]
 
 SUSPICIOUS_KEYWORDS = [
     "compromised", "unauthorized", "login attempt", "invoice",
     "gift card", "crypto", "bitcoin", "lottery", "prize",
     "free money", "reward", "winner", "inheritance",
-    "tax refund", "payment pending", "parcel delivery"
+    "tax refund", "payment pending", "parcel delivery", "wallet"
 ]
 
 THREAT_KEYWORDS = [
@@ -28,12 +29,12 @@ THREAT_KEYWORDS = [
 SUSPICIOUS_PATHS = [
     "login", "signin", "verify", "authenticate", "reset-password",
     "payment", "invoice", "wallet", "bank", "confirm", "security",
-    "account", "update", "secure", "validate"
+    "account", "update", "secure", "validate", "auth", "reset"
 ]
 
 SUSPICIOUS_PARAMS = [
     "token", "session", "redirect", "password", "verify", "login",
-    "continue", "return", "auth", "url", "next", "destination"
+    "continue", "return", "auth", "url", "next", "destination", "email", "otp"
 ]
 
 # Added for hostname check specifically to give more granular scores if needed

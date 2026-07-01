@@ -1,73 +1,94 @@
 import React from 'react';
-import { Type, Cpu, ShieldAlert, FileText, ArrowRight } from 'lucide-react';
-import SectionTitle from '../components/SectionTitle';
-import AnimatedContainer from '../components/AnimatedContainer';
+import { motion } from 'framer-motion';
+import { Search, ShieldCheck, Brain, FileText } from 'lucide-react';
+import GlassCard from '../components/GlassCard';
 
 const steps = [
   {
-    title: 'Input',
-    description: 'Provide a suspicious URL or email content for analysis.',
-    icon: <Type className="w-6 h-6" />,
+    icon: <Search className="w-6 h-6" />,
+    title: 'Data Ingestion',
+    description: 'Securely extract structural and linguistic features from the target URL or email content.',
+    color: 'text-accent-primary',
+    delay: 0
   },
   {
-    title: 'AI Analysis',
-    description: 'Our neural networks inspect patterns, headers, and metadata.',
-    icon: <Cpu className="w-6 h-6" />,
+    icon: <ShieldCheck className="w-6 h-6" />,
+    title: 'Heuristic Engine',
+    description: 'Execute hundreds of behavioral and structural security checks across 20+ specialized detectors.',
+    color: 'text-accent-secondary',
+    delay: 0.1
   },
   {
-    title: 'Threat Detection',
-    description: 'Models identify risks using global threat intelligence.',
-    icon: <ShieldAlert className="w-6 h-6" />,
+    icon: <Brain className="w-6 h-6" />,
+    title: 'Threat Intelligence',
+    description: 'Correlate findings to identify specific attack vectors and calculate the precise risk profile.',
+    color: 'text-accent-primary',
+    delay: 0.2
   },
   {
-    title: 'Security Report',
-    description: 'Receive a detailed risk assessment and explanation.',
     icon: <FileText className="w-6 h-6" />,
-  },
+    title: 'SecOps Reporting',
+    description: 'Generate professional executive summaries and technical countermeasures for incident response.',
+    color: 'text-accent-secondary',
+    delay: 0.3
+  }
 ];
 
 const HowItWorks: React.FC = () => {
   return (
-    <section className="py-24 px-6 relative">
+    <section className="py-24 px-6 relative overflow-hidden" id="how-it-works">
       <div className="max-w-7xl mx-auto">
-        <SectionTitle
-          title="How PhishGuard Works"
-          subtitle="A seamless process from suspicious input to actionable intelligence."
-        />
+        <div className="text-center mb-16">
+          <motion.span
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-accent-primary font-bold uppercase tracking-widest text-sm"
+          >
+            Methodology
+          </motion.span>
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.1 }}
+            className="text-4xl md:text-5xl font-heading font-bold text-white mt-4 mb-6"
+          >
+            Enterprise Grade Analysis
+          </motion.h2>
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.2 }}
+            className="text-text-secondary text-lg max-w-2xl mx-auto"
+          >
+            PhishGuard uses a proprietary multi-layered heuristic engine to analyze
+            digital assets in real-time, providing explainable security intelligence.
+          </motion.p>
+        </div>
 
-        <div className="relative mt-20">
-          {/* Connecting Line (Desktop) */}
-          <div className="hidden lg:block absolute top-12 left-[10%] right-[10%] h-0.5 bg-gradient-to-r from-accent-primary/20 via-accent-secondary/20 to-accent-primary/20" />
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-8">
-            {steps.map((step, index) => (
-              <AnimatedContainer key={index} delay={index * 0.15} className="relative z-10 flex flex-col items-center text-center">
-                <div className="w-24 h-24 rounded-2xl bg-card border border-white/10 flex items-center justify-center mb-8 relative group">
-                  <div className="absolute inset-0 rounded-2xl bg-accent-primary opacity-0 group-hover:opacity-10 blur-xl transition-opacity" />
-                  <div className="text-accent-primary group-hover:scale-110 transition-transform">
-                    {step.icon}
-                  </div>
-
-                  {/* Step Number Badge */}
-                  <div className="absolute -top-3 -right-3 w-8 h-8 rounded-lg bg-accent-secondary flex items-center justify-center text-xs font-bold text-white shadow-lg">
-                    {index + 1}
-                  </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          {steps.map((step, index) => (
+            <motion.div
+              key={index}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: step.delay }}
+            >
+              <GlassCard className="h-full relative group">
+                <div className="absolute -top-4 -right-4 w-12 h-12 rounded-full bg-background-primary border border-white/10 flex items-center justify-center font-heading font-bold text-text-secondary">
+                  0{index + 1}
                 </div>
-
-                <h3 className="text-xl font-heading font-bold mb-3">{step.title}</h3>
-                <p className="text-text-secondary text-sm leading-relaxed max-w-[200px]">
-                  {step.description}
-                </p>
-
-                {/* Mobile Arrow */}
-                {index < steps.length - 1 && (
-                  <div className="mt-8 lg:hidden text-accent-primary/30">
-                    <ArrowRight className="rotate-90" />
-                  </div>
-                )}
-              </AnimatedContainer>
-            ))}
-          </div>
+                <div className={`mb-6 p-3 rounded-2xl bg-white/5 w-fit ${step.color} group-hover:scale-110 transition-transform duration-500`}>
+                  {step.icon}
+                </div>
+                <h3 className="text-xl font-heading font-bold text-white mb-4">{step.title}</h3>
+                <p className="text-text-secondary leading-relaxed">{step.description}</p>
+              </GlassCard>
+            </motion.div>
+          ))}
         </div>
       </div>
     </section>

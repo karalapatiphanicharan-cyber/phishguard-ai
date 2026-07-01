@@ -1,7 +1,7 @@
 # Scoring weights for different detection indicators
 
 URL_WEIGHTS = {
-    "typosquatting": 30,
+    "typosquatting": 50,
     "homograph": 40,
     "high_entropy": 25,
     "ip_address": 40,
@@ -16,11 +16,12 @@ URL_WEIGHTS = {
     "long_url": 10,
     "multiple_redirects": 20,
     "keyword_match": 25,
-    "https_missing": 25
+    "https_missing": 25,
+    "dns_style": 15
 }
 
 EMAIL_WEIGHTS = {
-    "urgent_language": 20,
+    "urgent_language": 30,
     "credential_request": 35,
     "brand_impersonation": 35,
     "threat_language": 30,

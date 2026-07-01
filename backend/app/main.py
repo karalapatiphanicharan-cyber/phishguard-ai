@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from .routes import url_analyzer, email_analyzer
 
-app = FastAPI(title="PhishGuard AI API", version="1.0.0")
+app = FastAPI(title="PhishGuard Enterprise API", version="1.0.0")
 
 # Configure CORS
 app.add_middleware(
@@ -19,4 +19,4 @@ app.include_router(email_analyzer.router, prefix="/api", tags=["Email Analysis"]
 
 @app.get("/")
 async def root():
-    return {"message": "PhishGuard AI API is running"}
+    return {"message": "PhishGuard Enterprise API is running"}

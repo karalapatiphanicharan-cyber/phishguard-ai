@@ -21,7 +21,7 @@ const UrlScanner: React.FC = () => {
     'Checking URL...',
     'Extracting Features...',
     'Running Heuristic Analysis...',
-    'Consulting AI Security Analyst...',
+    'Consulting Threat Intelligence Analyst...',
     'Generating Threat Intelligence...',
     'Preparing Final Report...',
   ];
@@ -89,7 +89,7 @@ const UrlScanner: React.FC = () => {
       <AnimatedContainer>
         <SectionTitle
           title="URL Threat Analyzer"
-          subtitle="Deep scan URLs for phishing, malware, and social engineering indicators using intelligent heuristics and AI."
+          subtitle="Deep scan URLs for phishing, malware, and social engineering indicators using intelligent heuristics and threat intelligence."
           align="center"
         />
       </AnimatedContainer>
