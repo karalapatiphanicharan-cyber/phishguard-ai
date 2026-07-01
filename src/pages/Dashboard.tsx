@@ -63,6 +63,14 @@ const Dashboard: React.FC = () => {
       'Brand Impersonation': 0,
       'Business Email Compromise': 0,
       'Invoice Scam': 0,
+      'Shortened URL Abuse': 0,
+      'Credential Harvesting': 0,
+      'Typosquatting': 0,
+      'Suspicious Redirect': 0,
+      'Reward Scam': 0,
+      'Lottery Scam': 0,
+      'Extortion Scam': 0,
+      'Password Reset Scam': 0,
       'Other': 0
     };
 
@@ -95,12 +103,19 @@ const Dashboard: React.FC = () => {
       h.data.detected_issues.forEach(issue => {
         // Normalize issue names for better grouping
         let key = issue;
-        if (issue.includes('typosquat')) key = 'Typosquatting';
-        else if (issue.includes('brand')) key = 'Brand Impersonation';
-        else if (issue.includes('shortener')) key = 'URL Shortener';
-        else if (issue.includes('TLD')) key = 'Suspicious TLD';
-        else if (issue.includes('credential')) key = 'Credential Request';
-        else if (issue.includes('redirect')) key = 'Redirect Parameter';
+        const lowerIssue = issue.toLowerCase();
+        if (lowerIssue.includes('typosquat')) key = 'Typosquatting';
+        else if (lowerIssue.includes('brand')) key = 'Brand Impersonation';
+        else if (lowerIssue.includes('shortener')) key = 'URL Shortener';
+        else if (lowerIssue.includes('tld')) key = 'Suspicious TLD';
+        else if (lowerIssue.includes('credential')) key = 'Credential Request';
+        else if (lowerIssue.includes('redirect')) key = 'Redirect Parameter';
+        else if (lowerIssue.includes('ip address')) key = 'IP-based Hosting';
+        else if (lowerIssue.includes('entropy')) key = 'Domain Entropy';
+        else if (lowerIssue.includes('homograph')) key = 'Homograph Attack';
+        else if (lowerIssue.includes('urgent')) key = 'Urgency Tactics';
+        else if (lowerIssue.includes('sender')) key = 'Sender Spoofing';
+        else if (lowerIssue.includes('encoding')) key = 'Encoding Trickery';
 
         counts[key] = (counts[key] || 0) + 1;
       });
@@ -127,7 +142,7 @@ const Dashboard: React.FC = () => {
     setShowClearConfirm(false);
   };
 
-  const COLORS = ['#00E5FF', '#7C3AED', '#FF3D71', '#FFAB00', '#00D68F', '#8F9BB3'];
+  const COLORS = ['#00E5FF', '#7C3AED', '#FF3D71', '#FFAB00', '#00D68F', '#8F9BB3', '#FF6B6B', '#4ECDC4', '#45B7D1', '#FFA07A', '#98D8C8', '#EE82EE', '#F0E68C'];
 
   if (selectedEntry) {
     return (
@@ -383,7 +398,7 @@ const Dashboard: React.FC = () => {
                        { label: 'Primary Vector', value: stats.highRisk > stats.safe ? 'Phishing Redirection' : 'Low Threat Surface' },
                        { label: 'Most Common Indicator', value: topIndicators[0]?.[0] || 'N/A' },
                        { label: 'Detected Brands', value: history.filter(h => h.data.detected_issues.some(i => i.toLowerCase().includes('brand'))).length },
-                       { label: 'AI Confidence', value: 'High Accuracy' }
+                       { label: 'Detection Confidence', value: 'High Accuracy' }
                      ].map((insight, i) => (
                        <div key={i} className="p-4 rounded-xl bg-white/5 border border-white/5 space-y-1">
                          <span className="text-[10px] font-bold text-text-secondary uppercase tracking-widest">{insight.label}</span>

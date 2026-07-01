@@ -36,7 +36,7 @@ const EmailScanner: React.FC = () => {
     'Parsing Email...',
     'Extracting Features...',
     'Running Heuristic Analysis...',
-    'Consulting AI Security Analyst...',
+    'Consulting Threat Intelligence Analyst...',
     'Generating Threat Report...',
   ];
 
@@ -108,7 +108,7 @@ const EmailScanner: React.FC = () => {
       <AnimatedContainer>
         <SectionTitle
           title="Email Threat Intelligence"
-          subtitle="Paste email contents to detect sophisticated social engineering and phishing attempts using AI."
+          subtitle="Paste email contents to detect sophisticated social engineering and phishing attempts using enterprise threat intelligence."
           align="center"
         />
       </AnimatedContainer>

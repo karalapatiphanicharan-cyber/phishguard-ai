@@ -7,7 +7,7 @@ const Timeline: React.FC = () => {
     { icon: <Search className="w-4 h-4" />, label: 'Input Received', desc: 'Secure data ingestion complete.' },
     { icon: <Zap className="w-4 h-4" />, label: 'Feature Extraction', desc: 'Analyzing structural elements.' },
     { icon: <ShieldCheck className="w-4 h-4" />, label: 'Heuristic Analysis', desc: 'Pattern matching active.' },
-    { icon: <Brain className="w-4 h-4" />, label: 'AI Deep Analysis', desc: 'LLM security reasoning.' },
+    { icon: <Brain className="w-4 h-4" />, label: 'Deep Analysis', desc: 'Enterprise security reasoning.' },
     { icon: <CheckCircle2 className="w-4 h-4" />, label: 'Report Generated', desc: 'Final classification ready.' },
   ];
 

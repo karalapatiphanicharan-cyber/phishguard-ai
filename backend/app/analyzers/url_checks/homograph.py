@@ -1,26 +1,17 @@
-import unicodedata
-
 def check_homograph(hostname: str) -> dict:
-    """
-    Detects potential Unicode homograph attacks (e.g., using Cyrillic 'а' instead of Latin 'a').
-    """
-    is_unicode = False
-    suspicious_chars = []
+    if not hostname:
+        return {"detected": False}
 
-    for char in hostname:
-        if ord(char) > 127:
-            is_unicode = True
-            try:
-                name = unicodedata.name(char)
-                suspicious_chars.append(f"{char} ({name})")
-            except ValueError:
-                suspicious_chars.append(char)
-
-    if is_unicode:
+    # Check for non-ASCII characters
+    try:
+        hostname.encode('ascii')
+        return {"detected": False}
+    except UnicodeEncodeError:
+        # Detect where the non-ASCII character is
+        non_ascii_chars = [c for c in hostname if ord(c) > 127]
         return {
             "detected": True,
-            "suspicious_chars": suspicious_chars,
-            "reason": "URL contains non-ASCII characters, possible homograph attack"
+            "type": "Unicode Homograph",
+            "characters": non_ascii_chars,
+            "reason": f"Unicode homograph detected. Hostname contains non-ASCII characters ({', '.join(non_ascii_chars)}) used for spoofing."
         }
-
-    return {"detected": False}

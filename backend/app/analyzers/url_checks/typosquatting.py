@@ -1,6 +1,9 @@
 from Levenshtein import distance
 from ...config.brands import LEGITIMATE_BRANDS
 import re
+import logging
+
+logger = logging.getLogger(__name__)
 
 def check_typosquatting(domain: str) -> dict:
     """
@@ -26,19 +29,23 @@ def check_typosquatting(domain: str) -> dict:
             }
 
         # 2. Distance check on full domain
-        dist = distance(domain, brand)
-        if dist <= 2 and len(brand) > 4:
-            return {
-                "detected": True,
-                "brand": brand,
-                "distance": dist,
-                "reason": f"Domain '{domain}' is a typosquat of legitimate brand '{brand}'"
-            }
+        # ONLY if the domain is somewhat similar in length to the brand
+        if abs(len(domain) - len(brand)) <= 2:
+            dist = distance(domain, brand)
+            if dist <= 2 and len(brand) > 4:
+                return {
+                    "detected": True,
+                    "brand": brand,
+                    "distance": dist,
+                    "reason": f"Domain '{domain}' is a typosquat of legitimate brand '{brand}'"
+                }
 
         # 3. Distance check on parts
         for part in parts:
             if len(part) < 4: continue
             if part == brand: continue
+            if abs(len(part) - len(brand)) > 1: continue
+
             part_dist = distance(part, brand)
             if part_dist <= 1: # stricter for parts
                 return {

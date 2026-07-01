@@ -1,6 +1,6 @@
 {
-  "name": "PhishGuard AI",
   "short_name": "PhishGuard",
+  "name": "PhishGuard Enterprise",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#050816",

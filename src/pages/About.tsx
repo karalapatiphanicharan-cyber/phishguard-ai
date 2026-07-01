@@ -9,7 +9,7 @@ const About: React.FC = () => {
     <div className="max-w-7xl mx-auto px-6 py-20">
       <AnimatedContainer>
         <SectionTitle
-          title="About PhishGuard AI"
+          title="About PhishGuard Enterprise"
           subtitle="Our mission is to democratize elite-level cybersecurity intelligence."
         />
       </AnimatedContainer>
@@ -18,14 +18,14 @@ const About: React.FC = () => {
         <AnimatedContainer direction="right">
           <h2 className="text-3xl font-heading font-bold mb-6">Securing the Digital Frontier</h2>
           <p className="text-text-secondary text-lg mb-6 leading-relaxed">
-            PhishGuard AI was born out of a simple observation: as phishing attacks
+            PhishGuard was born out of a simple observation: as phishing attacks
             become more sophisticated, the tools to combat them must evolve faster.
           </p>
           <p className="text-text-secondary text-lg mb-8 leading-relaxed">
-            We leverage state-of-the-art Large Language Models and computer vision
+            We leverage state-of-the-art heuristic engines and structural analysis
             to identify malicious intent that traditional signature-based systems miss.
-            Our focus is on "Explainable AI"—not just telling you something is
-            dangerous, but showing you exactly why.
+            Our focus is on "Explainable Security"—not just telling you something is
+            dangerous, but showing you exactly why using advanced behavioral heuristics.
           </p>
           <div className="grid grid-cols-2 gap-6">
             <div className="p-4 rounded-2xl bg-white/5 border border-white/10">

@@ -8,7 +8,7 @@ interface LoadingScreenProps {
 
 const LoadingScreen: React.FC<LoadingScreenProps> = ({ children }) => {
   const [loading, setLoading] = useState(true);
-  const [status, setStatus] = useState('Initializing AI Security Engine...');
+  const [status, setStatus] = useState('Initializing Security Engine...');
 
   useEffect(() => {
     const timer1 = setTimeout(() => setStatus('Loading Threat Intelligence...'), 400);
@@ -42,7 +42,7 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({ children }) => {
 
             <div className="flex flex-col items-center gap-4">
               <h2 className="text-2xl font-heading font-bold text-white tracking-widest">
-                PHISHGUARD AI
+                PHISHGUARD
               </h2>
               <div className="w-48 h-1 bg-white/5 rounded-full overflow-hidden">
                 <motion.div

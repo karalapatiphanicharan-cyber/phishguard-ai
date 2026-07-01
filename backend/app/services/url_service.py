@@ -1,9 +1,9 @@
 from ..models.schemas import URLAnalysisResponse, URLDetails, SecurityChecks, AIAnalysis
-from .gemini_service import GeminiService
 from ..analyzers.detection_engine import DetectionEngine
+from .report_generator import SummaryGenerator, RecommendationGenerator
 
 async def analyze_url_heuristics(url: str) -> URLAnalysisResponse:
-    # Use the new DetectionEngine
+    # Use the DetectionEngine
     result = DetectionEngine.analyze_url(url)
 
     indicators = result["indicators"]
@@ -21,50 +21,25 @@ async def analyze_url_heuristics(url: str) -> URLAnalysisResponse:
         suspicious_tld=indicators["suspicious_tld"]["detected"],
         non_standard_port=indicators["port"]["detected"],
         encoded_characters=indicators["encoding"]["detected"],
-        # New fields
         typosquatting=indicators["typosquatting"]["detected"],
         homograph=indicators["homograph"]["detected"],
         high_entropy=indicators["entropy"]["detected"],
         brand_impersonation=indicators["brand_impersonation"]["detected"]
     )
 
-    # Heuristic dictionary for AI context
-    heuristic_data = {
-        "risk_score": result["score"],
-        "classification": result["classification"],
-        "detected_issues": result["reasons"],
-        "security_checks": security_checks.model_dump(),
-        "indicators": indicators,
-        "threat_category": result["threat_category"]
-    }
+    # Generate Analysis Reports locally
+    summary = SummaryGenerator.generate_url_summary(result)
+    recommendations = RecommendationGenerator.get_url_recommendations(result)
 
-    # AI Analysis
-    ai_result = await GeminiService.analyze_url_threats(url, heuristic_data)
-
-    # Heuristic Fallback if Gemini is offline
-    if ai_result is None:
-        explanation = result["reasons"]
-        recommendations = [
-            "Do not enter any personal or financial information.",
-            "Verify the website through an official channel.",
-            "Report this URL to your security team if this is a corporate environment."
-        ]
-        if result["score"] < 30:
-            recommendations = ["Continue to use caution when browsing unknown websites."]
-
-        summary = f"Heuristic analysis has flagged this URL as {result['classification'].lower()}."
-        if result["reasons"]:
-            summary += f" Key indicators include {', '.join(result['reasons'][:2])}."
-
-        ai_result = AIAnalysis(
-            summary=summary,
-            threat_type=result["threat_category"],
-            confidence="High" if result["score"] > 80 else "Medium",
-            attack_goal="Credential theft or malicious redirection" if result["score"] > 30 else "Unknown",
-            explanation=explanation,
-            recommendations=recommendations,
-            likely_target="General Web Users"
-        )
+    ai_result = AIAnalysis(
+        summary=summary,
+        threat_type=result["threat_category"],
+        confidence="High" if result["score"] > 80 else "Medium" if result["score"] > 30 else "Low",
+        attack_goal="Credential theft or malicious redirection" if result["score"] > 30 else "Unknown",
+        explanation=result["reasons"],
+        recommendations=recommendations,
+        likely_target="General Web Users"
+    )
 
     recommendation = "This URL appears to be safe."
     if result["score"] >= 80:

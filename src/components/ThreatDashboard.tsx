@@ -158,7 +158,7 @@ const ThreatDashboard: React.FC<ThreatDashboardProps> = ({ result, type, onClear
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
         {/* Left Column - Intelligence & Summary */}
         <div className="lg:col-span-8 space-y-8">
-          {/* AI Intelligence Summary */}
+          {/* Intelligence Summary */}
           <GlassCard className="p-8 border-accent-secondary/30 bg-accent-secondary/5 relative overflow-hidden group">
             <div className="absolute top-0 right-0 w-96 h-96 bg-accent-secondary/10 blur-[120px] -z-10 group-hover:bg-accent-secondary/20 transition-all duration-1000" />
 
@@ -194,7 +194,7 @@ const ThreatDashboard: React.FC<ThreatDashboardProps> = ({ result, type, onClear
                 <div className="relative">
                    <div className="absolute -left-4 top-0 bottom-0 w-1 bg-accent-secondary/30 rounded-full" />
                    <div className="pl-6 space-y-3">
-                      <span className="text-[10px] font-bold text-text-secondary uppercase tracking-widest">Executive Summary</span>
+                      <span className="text-[10px] font-bold text-text-secondary uppercase tracking-widest">Threat Summary</span>
                       <p className="text-base text-text-primary leading-relaxed italic font-medium">
                         "{ai.summary}"
                       </p>
@@ -238,8 +238,8 @@ const ThreatDashboard: React.FC<ThreatDashboardProps> = ({ result, type, onClear
               <div className="flex flex-col items-center justify-center py-20 text-center space-y-4">
                 <Brain className="w-16 h-16 text-white/5 animate-pulse" />
                 <div className="space-y-1">
-                  <p className="text-text-secondary text-sm font-bold uppercase tracking-widest">AI Intelligence Offline</p>
-                  <p className="text-[10px] text-text-secondary max-w-xs">Heuristic security engine is active. Advanced AI reasoning is currently unavailable.</p>
+                  <p className="text-text-secondary text-sm font-bold uppercase tracking-widest">Threat Intelligence Engine Offline</p>
+                  <p className="text-[10px] text-text-secondary max-w-xs">Heuristic security engine is active. Advanced reasoning is currently unavailable.</p>
                 </div>
               </div>
             )}
